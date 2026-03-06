@@ -2,7 +2,7 @@
   "name": "CLÁSICO",
   "short_name": "CLÁSICO",
   "description": "CLÁSICO Bar Seat Status",
-  "start_url": "./",
+  "start_url": "./?staff=1",
   "display": "standalone",
   "background_color": "#f5f4f0",
   "theme_color": "#f5f4f0",
