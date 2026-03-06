@@ -15,3 +15,241 @@
     :root {
       --bg: #f5f4f0; --panel: #eceae5;
       --ink: #111; --mid: #777;
+      --faint: rgba(17,17,17,0.22);
+      --border: rgba(17,17,17,0.16);
+      --vacant: #fff; --occ: #c0bebb;
+    }
+    html, body {
+      height: 100%; background: var(--bg); color: var(--ink);
+      font-family: 'Space Mono', monospace;
+      -webkit-font-smoothing: antialiased; overscroll-behavior: none;
+    }
+    .app {
+      max-width: 390px; margin: 0 auto; min-height: 100vh;
+      padding: 0 16px 36px; display: flex; flex-direction: column;
+    }
+    .header {
+      padding-top: 28px; display: flex;
+      align-items: flex-end; justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 52px;
+      letter-spacing: 0.05em; line-height: 0.9; user-select: none;
+    }
+    .hdr-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-bottom: 4px; }
+    .status-row { display: flex; align-items: center; gap: 7px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
+    .dot.open  { animation: blink 2s ease-in-out infinite; }
+    .dot.closed { background: #c0c0c0; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.18} }
+    .status-lbl { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; }
+    .time-lbl   { font-size: 9px; letter-spacing: 0.10em; color: var(--mid); }
+    .date-bar {
+      margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--border);
+      font-size: 9px; letter-spacing: 0.18em; color: var(--mid); text-transform: uppercase;
+    }
+    .floor {
+      margin-top: 18px; background: var(--panel);
+      border: 1px solid var(--border); padding: 14px 10px 14px;
+    }
+    .floor-label { font-size: 7px; letter-spacing: 0.2em; color: var(--faint); text-transform: uppercase; margin-bottom: 8px; }
+    #floorSvg { width: 100%; display: block; touch-action: manipulation; }
+    .sg, .tg { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .legend { display: flex; gap: 18px; margin-top: 12px; }
+    .leg { display: flex; align-items: center; gap: 6px; font-size: 8px; letter-spacing: 0.12em; color: var(--mid); text-transform: uppercase; }
+    .leg-sq { width: 11px; height: 11px; border: 1.5px solid var(--ink); background: var(--vacant); flex-shrink: 0; }
+    .leg-sq.occ { background: var(--occ); border-color: #999; }
+    .toggle-wrap { margin-top: 18px; }
+    .toggle-btn {
+      width: 100%; padding: 15px; border: 1.5px solid var(--ink);
+      background: transparent; color: var(--ink); font-family: 'Space Mono', monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+      cursor: pointer; border-radius: 1px; transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .toggle-btn.is-open { background: var(--ink); color: var(--bg); }
+    .toggle-btn:active { opacity: 0.65; }
+    .footer { margin-top: 16px; font-size: 7px; letter-spacing: 0.18em; color: var(--faint); text-align: center; text-transform: uppercase; }
+    .closed-screen {
+      display: none; position: fixed; inset: 0; background: var(--bg); z-index: 100;
+      flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    }
+    .closed-screen.show { display: flex; }
+    .cl-logo { font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 0.06em; color: var(--ink); opacity: 0.07; line-height: 1; }
+    .cl-sorry {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+      text-align: center;
+      line-height: 1.2;
+    }
+    .cl-txt { font-size: 10px; letter-spacing: 0.22em; color: var(--mid); text-transform: uppercase; }
+    .cl-btn {
+      margin-top: 14px; padding: 14px 36px; border: 1.5px solid var(--ink); background: transparent;
+      font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .cl-btn:active { opacity: 0.6; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="logo">CLÁSICO</div>
+    <div class="hdr-right">
+      <div class="status-row">
+        <div class="dot" id="dot"></div>
+        <span class="status-lbl" id="statusLbl">OPEN</span>
+      </div>
+      <div class="time-lbl" id="timeLbl">—</div>
+    </div>
+  </div>
+  <div class="date-bar" id="dateBar">—</div>
+  <div class="floor">
+    <div class="floor-label">← Entrance</div>
+    <svg id="floorSvg" viewBox="0 0 340 134" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <div class="legend">
+    <div class="leg"><div class="leg-sq"></div>Vacant</div>
+    <div class="leg"><div class="leg-sq occ"></div>Occupied</div>
+  </div>
+  <div id="staffControls">
+    <div class="toggle-wrap">
+      <button class="toggle-btn" id="toggleBtn" onclick="toggleStore()">—</button>
+    </div>
+  </div>
+  <div class="footer">CLÁSICO Bar · Seat Status</div>
+</div>
+<div class="closed-screen" id="closedScreen">
+  <div class="cl-logo">CLÁSICO</div>
+  <div class="cl-sorry" id="closedSorry">Sorry, we are closed for today.</div>
+  <div class="cl-txt">Currently Closed</div>
+  <button class="cl-btn" id="closedCta" onclick="toggleStore()">Open the Store</button>
+</div>
+<script>
+  const KEY = 'clasico_v12';
+  let S = { isOpen: true, openTime: null, counter: Array(10).fill(false), table: false };
+  function load() { try { const d = localStorage.getItem(KEY); if (d) S = {...S, ...JSON.parse(d)}; } catch(e){} }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+  const DAYS   = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  function pad(n){ return String(n).padStart(2,'0'); }
+  const SZ = 28, G = 6, ST = 34;
+  const ARM_X = 204, ARM_W = 28, ARM_H = 96;
+  const BAR_X = 0, BAR_Y = 68, BAR_W = 204, BAR_H = 28;
+  const COL_X = 238;
+  const ROW_Y = 102;
+  const TBL_R = 26, TBL_CX = 306, TBL_CY = 48;
+  const INK = '#111', OCC_F = '#c0bebb', OCC_S = '#999', VAC_F = '#fff';
+  const XC = 'rgba(17,17,17,0.30)', MID = '#777';
+  function svgEl(tag, attrs) {
+    const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [k,v] of Object.entries(attrs)) e.setAttribute(k, v);
+    return e;
+  }
+  function seatGroup(x, y, label, occ, onTap) {
+    const g = svgEl('g', { class: 'sg' });
+    g.addEventListener('click', onTap);
+    g.appendChild(svgEl('rect', { x, y, width:SZ, height:SZ, rx:2,
+      fill: occ ? OCC_F : VAC_F, stroke: occ ? OCC_S : INK, 'stroke-width': 1.5 }));
+    if (occ) {
+      const p = 6;
+      g.appendChild(svgEl('line', { x1:x+p, y1:y+p, x2:x+SZ-p, y2:y+SZ-p, stroke:XC, 'stroke-width':2.2, 'stroke-linecap':'round' }));
+      g.appendChild(svgEl('line', { x1:x+SZ-p, y1:y+p, x2:x+p, y2:y+SZ-p, stroke:XC, 'stroke-width':2.2, 'stroke-linecap':'round' }));
+    }
+    const t = svgEl('text', { x: x+SZ/2, y: y+SZ/2+4, 'text-anchor':'middle',
+      fill: occ ? 'rgba(17,17,17,0.28)' : INK,
+      'font-family':'Space Mono,monospace', 'font-size':9, 'font-weight':700 });
+    t.textContent = label;
+    g.appendChild(t);
+    return g;
+  }
+  function draw() {
+    const svg = document.getElementById('floorSvg');
+    svg.innerHTML = '';
+    svg.appendChild(svgEl('rect', { x:ARM_X, y:0, width:ARM_W, height:ARM_H, fill:INK, rx:0 }));
+    svg.appendChild(svgEl('rect', { x:BAR_X, y:BAR_Y, width:BAR_W, height:BAR_H, fill:INK, rx:0 }));
+    const bt = svgEl('text', { x:BAR_W/2, y:BAR_Y+BAR_H/2+3, 'text-anchor':'middle',
+      fill:'rgba(245,244,240,0.72)', 'font-family':'Space Mono,monospace', 'font-size':7, 'font-weight':700, 'letter-spacing':2 });
+    bt.textContent = 'COUNTER';
+    svg.appendChild(bt);
+    const colDef = [
+      { num:10, idx:9, y:0 },
+      { num:9,  idx:8, y:ST },
+      { num:8,  idx:7, y:ST*2 },
+    ];
+    for (const {num, idx, y} of colDef) {
+      svg.appendChild(seatGroup(COL_X, y, num, S.counter[idx], () => {
+        if (!S.isOpen || !IS_STAFF) return;
+        S.counter[idx] = !S.counter[idx]; save(); draw();
+      }));
+    }
+    const tOcc = S.table;
+    const tg = svgEl('g', { class:'tg' });
+    tg.addEventListener('click', () => { if (!S.isOpen || !IS_STAFF) return; S.table = !S.table; save(); draw(); });
+    tg.appendChild(svgEl('circle', { cx:TBL_CX, cy:TBL_CY, r:TBL_R,
+      fill: tOcc ? OCC_F : VAC_F, stroke: tOcc ? OCC_S : INK, 'stroke-width':1.5 }));
+    if (tOcc) {
+      const d = TBL_R * 0.5;
+      tg.appendChild(svgEl('line', { x1:TBL_CX-d, y1:TBL_CY-d, x2:TBL_CX+d, y2:TBL_CY+d, stroke:XC, 'stroke-width':2.5, 'stroke-linecap':'round' }));
+      tg.appendChild(svgEl('line', { x1:TBL_CX+d, y1:TBL_CY-d, x2:TBL_CX-d, y2:TBL_CY+d, stroke:XC, 'stroke-width':2.5, 'stroke-linecap':'round' }));
+    }
+    const tl1 = svgEl('text', { x:TBL_CX, y:TBL_CY-5, 'text-anchor':'middle',
+      fill: tOcc ? 'rgba(17,17,17,0.28)' : MID, 'font-family':'Space Mono,monospace', 'font-size':6, 'letter-spacing':1 });
+    tl1.textContent = 'STANDING';
+    tg.appendChild(tl1);
+    const tl2 = svgEl('text', { x:TBL_CX, y:TBL_CY+7, 'text-anchor':'middle',
+      fill: tOcc ? 'rgba(17,17,17,0.28)' : MID, 'font-family':'Space Mono,monospace', 'font-size':5 });
+    tl2.textContent = 'TABLE';
+    tg.appendChild(tl2);
+    svg.appendChild(tg);
+    for (let i = 0; i < 7; i++) {
+      svg.appendChild(seatGroup(i * ST, ROW_Y, i + 1, S.counter[i], () => {
+        if (!S.isOpen || !IS_STAFF) return;
+        S.counter[i] = !S.counter[i]; save(); draw();
+      }));
+    }
+  }
+  const IS_STAFF = new URLSearchParams(location.search).get('staff') === '1';
+  function renderStatus() {
+    const dot  = document.getElementById('dot');
+    const lbl  = document.getElementById('statusLbl');
+    const time = document.getElementById('timeLbl');
+    const btn  = document.getElementById('toggleBtn');
+    const cs   = document.getElementById('closedScreen');
+    const sc   = document.getElementById('staffControls');
+    const cta  = document.getElementById('closedCta');
+    sc.style.display  = IS_STAFF ? 'block' : 'none';
+    cta.style.display = IS_STAFF ? 'inline-block' : 'none';
+    const sorry = document.getElementById('closedSorry');
+    if (sorry) sorry.style.display = IS_STAFF ? 'none' : 'block';
+    if (S.isOpen) {
+      dot.className = 'dot open'; lbl.textContent = 'OPEN';
+      time.textContent = S.openTime
+        ? `Open from ${pad(new Date(S.openTime).getHours())}:${pad(new Date(S.openTime).getMinutes())}` : '';
+      btn.textContent = 'Close the Store'; btn.className = 'toggle-btn is-open';
+      cs.classList.remove('show');
+    } else {
+      dot.className = 'dot closed'; lbl.textContent = 'CLOSED';
+      time.textContent = '— Closed —'; btn.textContent = 'Open the Store';
+      btn.className = 'toggle-btn'; cs.classList.add('show');
+    }
+  }
+  function render() {
+    const d = new Date();
+    document.getElementById('dateBar').textContent =
+      `${DAYS[d.getDay()]}  ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+    draw(); renderStatus();
+  }
+  function toggleStore() {
+    S.isOpen = !S.isOpen;
+    if (S.isOpen) { S.openTime = Date.now(); S.counter = Array(10).fill(false); S.table = false; }
+    else { S.openTime = null; }
+    save(); render();
+  }
+  load(); render();
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+  setInterval(() => render(), 60000);
+</script>
+</body>
+</html>
