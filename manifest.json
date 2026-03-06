@@ -1,11 +1,11 @@
 {
-  "name": "CLÁSICO Bar",
+  "name": "CLÁSICO",
   "short_name": "CLÁSICO",
-  "description": "CLÁSICO Bar seat status",
-  "start_url": "./index.html",
+  "description": "CLÁSICO Bar Seat Status",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#f5f4f0",
-  "theme_color": "#111111",
+  "theme_color": "#f5f4f0",
   "orientation": "portrait",
   "icons": [
     {
